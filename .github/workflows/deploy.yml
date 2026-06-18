@@ -30,7 +30,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL }}
+          VITE_CONVEX_URL: https://acrobatic-dove-608.eu-west-1.convex.cloud
 
       - uses: actions/upload-pages-artifact@v3
         with:
