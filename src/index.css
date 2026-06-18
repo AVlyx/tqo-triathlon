@@ -78,6 +78,38 @@ body {
   66%{transform:translateY(10px)translateX(-10px)}
 }
 
+@keyframes qubitFlip {
+  0%,100%{transform:rotateY(0deg);color:#00f5ff}
+  50%{transform:rotateY(180deg);color:#8b5cf6}
+}
+.qubit-flip { animation: qubitFlip 2.4s ease-in-out infinite; display:inline-block; }
+
+@keyframes entangle {
+  0%,100%{box-shadow:0 0 8px #00f5ff}
+  50%{box-shadow:0 0 8px #ec4899}
+}
+.entangled { animation: entangle 1.6s ease-in-out infinite; }
+
+@keyframes cohPulse {
+  0%,100%{opacity:0.7}
+  50%{opacity:1}
+}
+.coh-pulse { animation: cohPulse 1.4s ease-in-out infinite; }
+
+@keyframes tunnel {
+  0%{opacity:0;transform:translateX(-12px)}
+  40%{opacity:0}
+  60%{opacity:1}
+  100%{opacity:1;transform:translateX(0)}
+}
+.tunnel-in { animation: tunnel 1.2s ease-out; }
+
+@keyframes spinFast { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+.spin-fast { animation: spinFast 0.6s linear infinite; }
+
+@keyframes hueShift { from{filter:hue-rotate(0deg)} to{filter:hue-rotate(360deg)} }
+.hue-cycle { animation: hueShift 6s linear infinite; }
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #0f172a; }
 ::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 3px; }

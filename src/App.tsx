@@ -209,6 +209,37 @@ const QO_EQUATIONS = [
   "n̂ = â†â  →  photon number operator",
   "Squeezed state: ΔX₁ < ½,  ΔX₂ > ½",
   "|α⟩ = e^{−|α|²/2} Σ (αⁿ/√n!) |n⟩",
+  "HOM dip: P(coincidence) → 0 at zero delay",
+  "Ŝ(ξ) = exp[½(ξ*â² − ξâ†²)]  (squeeze operator)",
+  "D̂(α) = exp(αâ† − α*â)  (displacement operator)",
+  "Bell: |Φ⁺⟩ = (|00⟩ + |11⟩)/√2",
+  "CHSH: |⟨S⟩| ≤ 2  (classical) ;  ≤ 2√2  (quantum)",
+  "Purcell factor: F_P = (3/4π²)(λ/n)³ (Q/V)",
+  "Rabi frequency: Ω_R = √(Ω² + δ²)",
+  "Photon flux: Φ = P/(ℏω)",
+  "Fock state energy: E_n = ℏω(n + ½)",
+  "Beam-splitter: â_out = (â_in + i b̂_in)/√2",
+  "Vacuum Rabi splitting: 2ℏg√(n+1)",
+  "Coherence length: ℓ_c = c·τ_c = c/Δν",
+  "Quantum efficiency: η = N_detected / N_incident",
+  "von Neumann entropy: S = −Tr[ρ ln ρ]",
+  "Thermal state: ⟨n⟩ = 1/(e^{ℏω/k_BT} − 1)",
+];
+
+// ─── Quantum facts that rotate through the banner ─────────────────────────
+const QO_FACTS = [
+  "A single photon has never been observed at rest. It is always running. Like our relay anchor, ideally.",
+  "Spontaneous emission is just an excited atom getting bored and dropping a photon. Relatable.",
+  "The vacuum is not empty — it fluctuates. Much like the start line before the gun.",
+  "Entangled particles share a fate across any distance. Like teammates sharing a single timing chip.",
+  "Bosons love to bunch together. Fermions refuse to share a state. Choose your relay partners wisely.",
+  "Measuring a quantum state destroys its superposition. Do not measure your finish time until you must.",
+  "A laser is just photons agreeing to move in perfect phase. Be the laser. Not the thermal lamp.",
+  "Heisenberg: you can know how fast you swam, or where you are. Never both at the wedding photo.",
+  "Tunneling lets a particle pass a barrier it lacks the energy to climb. See also: the final hill.",
+  "Decoherence is the universe's way of forcing you to commit to one outcome. Race day is decoherence.",
+  "The no-cloning theorem forbids duplicating an unknown quantum state. Hence: one registration per particle.",
+  "Zero-point energy means even at absolute zero, things still jiggle. So do warm-up legs.",
 ];
 
 function EquationTicker() {
@@ -240,6 +271,118 @@ function useKonami(cb: () => void) {
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
   }, [cb]);
+}
+
+// ─── Quantum fact banner ──────────────────────────────────────────────────
+function QuantumFactBanner() {
+  const [idx, setIdx] = useState(() => Math.floor(Math.random() * QO_FACTS.length));
+  const [show, setShow] = useState(true);
+  useEffect(() => {
+    const t = setInterval(() => {
+      setShow(false);
+      setTimeout(() => { setIdx((i) => (i + 1) % QO_FACTS.length); setShow(true); }, 350);
+    }, 9000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div style={{ border: "1px dashed #1e293b", borderRadius: 12, padding: "12px 18px", marginBottom: 20, background: "rgba(3,7,18,0.6)", display: "flex", gap: 12, alignItems: "center" }}>
+      <span className="qubit-flip" style={{ fontSize: 18 }}>⚛️</span>
+      <div style={{ flex: 1 }}>
+        <div style={{ color: "#8b5cf6", fontSize: 9, letterSpacing: 3, marginBottom: 3 }}>// QUANTUM FACT OF THE MEASUREMENT //</div>
+        <div style={{ color: "#94a3b8", fontSize: 12, lineHeight: 1.6, fontStyle: "italic", transition: "opacity 0.35s", opacity: show ? 1 : 0 }}>
+          {QO_FACTS[idx]}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Qubit register: a row of constantly-flipping qubits ──────────────────
+function QubitRegister({ accent }: { accent: string }) {
+  const [bits, setBits] = useState<number[]>(() => Array.from({ length: 8 }, () => (Math.random() < 0.5 ? 0 : 1)));
+  useEffect(() => {
+    const t = setInterval(() => {
+      setBits((b) => b.map((v) => (Math.random() < 0.35 ? 1 - v : v)));
+    }, 700);
+    return () => clearInterval(t);
+  }, []);
+  const decimal = bits.reduce((acc, b) => acc * 2 + b, 0);
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+      <span style={{ color: "#374151", fontSize: 10, fontFamily: "monospace" }}>|q⟩ =</span>
+      {bits.map((b, i) => (
+        <span key={i} style={{ fontFamily: "monospace", fontSize: 15, fontWeight: "bold", color: b ? accent : "#334155", width: 14, textAlign: "center", transition: "color 0.4s" }}>
+          {b}
+        </span>
+      ))}
+      <span style={{ color: "#475569", fontSize: 10, fontFamily: "monospace", marginLeft: 6 }}>= {decimal}₁₀ · {teamHash(bits)} entropy bits</span>
+    </div>
+  );
+}
+function teamHash(bits: number[]) {
+  return bits.filter((b) => b).length;
+}
+
+// ─── Live coherence gauge that drifts like a real noisy signal ────────────
+function CoherenceGauge() {
+  const [coh, setCoh] = useState(0.87);
+  useEffect(() => {
+    const t = setInterval(() => {
+      setCoh((c) => {
+        const next = c + (Math.random() - 0.5) * 0.08;
+        return Math.max(0.3, Math.min(0.99, next));
+      });
+    }, 600);
+    return () => clearInterval(t);
+  }, []);
+  const pct = Math.round(coh * 100);
+  const color = coh > 0.8 ? "#00ff88" : coh > 0.55 ? "#00f5ff" : "#ec4899";
+  return (
+    <div style={{ marginTop: 4 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "#475569", marginBottom: 4, fontFamily: "monospace" }}>
+        <span>SYSTEM COHERENCE ⟨ψ|ψ⟩</span>
+        <span className="coh-pulse" style={{ color }}>{pct}% · T₂ ≈ {(coh * 4).toFixed(1)}h</span>
+      </div>
+      <div style={{ height: 6, background: "#0f172a", borderRadius: 3, overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${pct}%`, background: color, borderRadius: 3, transition: "width 0.6s ease, background 0.6s", boxShadow: `0 0 8px ${color}` }} />
+      </div>
+    </div>
+  );
+}
+
+// ─── Decoherence countdown to race day ────────────────────────────────────
+const RACE_DATE = new Date("2026-09-13T09:00:00");
+function DecoherenceCountdown() {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const diff = Math.max(0, RACE_DATE.getTime() - now);
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  const cell = (val: number, lbl: string) => (
+    <div style={{ textAlign: "center" }}>
+      <div className="glow-cyan" style={{ fontSize: 20, fontWeight: "bold", color: "#00f5ff", fontFamily: "monospace" }}>{String(val).padStart(2, "0")}</div>
+      <div style={{ fontSize: 8, color: "#475569", letterSpacing: 2 }}>{lbl}</div>
+    </div>
+  );
+  return (
+    <div style={{ textAlign: "center", marginBottom: 20 }}>
+      <div style={{ color: "#8b5cf6", fontSize: 9, letterSpacing: 4, marginBottom: 8 }}>⏳ TIME UNTIL WAVE-FUNCTION COLLAPSE ⏳</div>
+      <div style={{ display: "inline-flex", gap: 18, alignItems: "center" }}>
+        {cell(d, "DAYS")}<span style={{ color: "#1e293b" }}>:</span>
+        {cell(h, "HRS")}<span style={{ color: "#1e293b" }}>:</span>
+        {cell(m, "MIN")}<span style={{ color: "#1e293b" }}>:</span>
+        {cell(s, "SEC")}
+      </div>
+      <div style={{ fontSize: 9, color: "#374151", marginTop: 6, fontFamily: "monospace" }}>
+        Bad Arolsen · 13 Sep 2026 · decoherence imminent
+      </div>
+    </div>
+  );
 }
 
 // ─── Main App ─────────────────────────────────────────────────────────────
@@ -337,26 +480,82 @@ export default function App() {
     }
   };
 
-  // Secret: type "photon" to trigger
+  // Secret: type quantum words to trigger overlays
   const typedSeq = useRef("");
   useEffect(() => {
+    const SECRETS: Record<string, string> = {
+      photon:
+        "📸 PHOTOELECTRIC EFFECT DETECTED 📸\n\n" +
+        "Einstein (1905): E_photon = hν\n\n" +
+        "You have successfully typed 'photon',\nthereby absorbing one quantum of attention.\n\n" +
+        "Work function of this easter egg: 3.2 eV\n" +
+        "Your kinetic energy: E_k = hν − φ\n\n" +
+        "Well done. This is worth 0.001 Nobel prizes.",
+      tunnel:
+        "🚇 QUANTUM TUNNELING ENGAGED 🚇\n\n" +
+        "Transmission coefficient:\nT ≈ e^{−2κL},  κ = √(2m(V₀−E))/ℏ\n\n" +
+        "You have passed through a potential barrier\nwithout the classical energy to do so.\n\n" +
+        "Applications: scanning tunneling microscopy,\nflash memory, and skipping the final hill.",
+      entangle:
+        "🔗 ENTANGLEMENT ESTABLISHED 🔗\n\n" +
+        "|Φ⁺⟩ = (|00⟩ + |11⟩)/√2\n\n" +
+        "Your relay team is now maximally entangled.\nMeasuring one member instantly fixes the\noutcome of the others. Spooky. Action. Distance.\n\n" +
+        "Concurrence: C = 1\nBell violation: |⟨S⟩| = 2√2 ≈ 2.83",
+      boson:
+        "👥 BOSONIC STATISTICS 👥\n\n" +
+        "Bosons obey Bose–Einstein statistics and\nlove to occupy the same quantum state.\n\n" +
+        "⟨n⟩ = 1/(e^{(ε−μ)/k_BT} − 1)\n\n" +
+        "At low temperature they condense into a single\nground state. Your relay team, in spirit.",
+      fermion:
+        "🚫 PAULI EXCLUSION ENFORCED 🚫\n\n" +
+        "No two fermions may share the same quantum state.\n\n" +
+        "ψ(1,2) = −ψ(2,1)  (antisymmetric)\n\n" +
+        "This is why your teammates each need their own\nrow in the table. The universe insists.",
+      qubit:
+        "🧮 QUBIT INITIALISED 🧮\n\n" +
+        "|q⟩ = cos(θ/2)|0⟩ + e^{iφ}sin(θ/2)|1⟩\n\n" +
+        "You now exist on the surface of the Bloch sphere.\nApply a Hadamard to enter superposition,\nor just sign up for the relay.",
+      laser:
+        "🔴 LIGHT AMPLIFICATION BY STIMULATED EMISSION 🔴\n\n" +
+        "L.A.S.E.R.\n\n" +
+        "Population inversion achieved.\nPhotons now march in perfect phase.\ng⁽²⁾(0) = 1, fully coherent.\n\n" +
+        "Try clicking the ⚛ logo four times for the real thing.",
+    };
+    const maxLen = Math.max(...Object.keys(SECRETS).map((k) => k.length));
     const h = (e: KeyboardEvent) => {
-      typedSeq.current = (typedSeq.current + e.key).slice(-6);
-      if (typedSeq.current === "photon") {
-        typedSeq.current = "";
-        setOverlay(
-          "📸 PHOTOELECTRIC EFFECT DETECTED 📸\n\n" +
-          "Einstein (1905): E_photon = hν\n\n" +
-          "You have successfully typed 'photon',\nthereby absorbing one quantum of attention.\n\n" +
-          "Work function of this easter egg: 3.2 eV\n" +
-          "Your kinetic energy: E_k = hν − φ\n\n" +
-          "Well done. This is worth 0.001 Nobel prizes."
-        );
+      if (e.key.length !== 1) return;
+      typedSeq.current = (typedSeq.current + e.key.toLowerCase()).slice(-maxLen);
+      for (const [word, msg] of Object.entries(SECRETS)) {
+        if (typedSeq.current.endsWith(word)) {
+          typedSeq.current = "";
+          setOverlay(msg);
+          break;
+        }
       }
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
   }, []);
+
+  // Quantum measurement: collapse the registry onto a random eigenstate
+  const measureParticipant = () => {
+    if (!registrations || registrations.length === 0) {
+      setOverlay(
+        "🌌 MEASUREMENT ON VACUUM STATE 🌌\n\n" +
+        "⟨0|â†â|0⟩ = 0\n\nThere are no particles to measure.\nThe detector clicks zero times.\nRegister someone first."
+      );
+      return;
+    }
+    const chosen = registrations[Math.floor(Math.random() * registrations.length)];
+    const p = (Math.random() / registrations.length + 1 / registrations.length).toFixed(3);
+    setOverlay(
+      "🎯 PROJECTIVE MEASUREMENT COMPLETE 🎯\n\n" +
+      `The wave function collapsed onto:\n\n        ⟨ ${chosen.name} ⟩\n\n` +
+      `P(this outcome) ≈ ${p}\n` +
+      "Born rule: P = |⟨eigenstate|ψ⟩|²\n\n" +
+      "This particle is hereby nominated as today's\nquantum-distinguished relay anchor. No appeals\n(the measurement already happened)."
+    );
+  };
 
   // Console art
   useEffect(() => {
@@ -367,8 +566,11 @@ export default function App() {
     );
     console.log("%cQuantum field state of this application:", "color:#8b5cf6;font-size:12px");
     console.log("%c|app⟩ = α|loading⟩ + β|ready⟩ + γ|crashed⟩", "color:#00f5ff;font-family:monospace;font-size:13px");
-    console.log("%c\nHidden triggers:\n  • Konami code (↑↑↓↓←→←→BA)\n  • Click ⚛ logo multiple times\n  • Type 'photon' on keyboard\n  • Triple-click the table header", "color:#6b7280;font-size:11px");
+    console.log("%c\nHidden triggers:\n  • Konami code (↑↑↓↓←→←→BA)\n  • Click ⚛ logo multiple times\n  • Type: photon · tunnel · entangle · boson · fermion · qubit · laser\n  • Triple-click the table header\n  • Press the MEASURE button to collapse the registry", "color:#6b7280;font-size:11px");
     console.log("%cĤ = ℏω(â†â + ½)   [Quantum Harmonic Oscillator]", "color:#00ff88;font-family:monospace;font-size:14px;margin-top:8px");
+    console.log("%c|ψ(t)⟩ = e^{−iĤt/ℏ}|ψ(0)⟩   [Schrödinger time evolution]", "color:#8b5cf6;font-family:monospace;font-size:13px");
+    console.log("%c⟨Â⟩ = Tr[ρ̂Â]   [expectation value of observable Â]", "color:#00f5ff;font-family:monospace;font-size:13px");
+    console.log("%cReality is non-local, contextual, and probably running late. See you at Bad Arolsen. ⚛", "color:#475569;font-style:italic;font-size:11px");
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -440,6 +642,12 @@ export default function App() {
           <EquationTicker />
         </header>
 
+        {/* ── DECOHERENCE COUNTDOWN ── */}
+        <DecoherenceCountdown />
+
+        {/* ── QUANTUM FACT BANNER ── */}
+        <QuantumFactBanner />
+
         {/* ── DISCIPLINES ── */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 12, marginBottom: 20 }}>
           {[
@@ -486,6 +694,16 @@ export default function App() {
             {schrodingerHover
               ? `n̂|ψ⟩ = ${teamSize}|ψ⟩  ·  60€/team · 20€/person`
               : "⟨n̂⟩ = ? · hover to measure photon number →"}
+          </div>
+
+          {/* Live coherence gauge */}
+          <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid #0f172a" }}>
+            <CoherenceGauge />
+          </div>
+
+          {/* Qubit register */}
+          <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid #0f172a" }}>
+            <QubitRegister accent={laserMode ? "#ff3377" : "#00f5ff"} />
           </div>
         </div>
 
@@ -564,8 +782,15 @@ export default function App() {
                 {teamSize} particles · triple-click for surprises · no-cloning theorem enforced
               </div>
             </div>
-            <div style={{ textAlign: "right", fontSize: 9, color: "#374151", fontFamily: "monospace", lineHeight: 1.6 }}>
-              60€/relay<br />20€/person
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <button onClick={(e) => { e.stopPropagation(); measureParticipant(); }} title="Collapse the registry onto a random eigenstate"
+                className="entangled"
+                style={{ background: "transparent", border: "1px solid #00f5ff", color: "#00f5ff", borderRadius: 8, padding: "6px 12px", fontSize: 9, letterSpacing: 2, cursor: "pointer", fontFamily: "inherit", fontWeight: "bold" }}>
+                🎯 MEASURE
+              </button>
+              <div style={{ textAlign: "right", fontSize: 9, color: "#374151", fontFamily: "monospace", lineHeight: 1.6 }}>
+                60€/relay<br />20€/person
+              </div>
             </div>
           </div>
 
