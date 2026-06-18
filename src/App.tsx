@@ -392,9 +392,9 @@ export default function App() {
   };
 
   const teamSize = registrations?.length ?? 0;
-  const p1swim = registrations?.filter(r => r.swimming === 1).length ?? 0;
-  const p1cycle = registrations?.filter(r => r.cycling === 1).length ?? 0;
-  const p1run = registrations?.filter(r => r.running === 1).length ?? 0;
+  const p1swim = registrations?.filter((r: { swimming?: number }) => r.swimming === 1).length ?? 0;
+  const p1cycle = registrations?.filter((r: { cycling?: number }) => r.cycling === 1).length ?? 0;
+  const p1run = registrations?.filter((r: { running?: number }) => r.running === 1).length ?? 0;
 
   const panelStyle = (borderColor: string, glowColor: string): React.CSSProperties => ({
     border: `1px solid ${borderColor}`,
